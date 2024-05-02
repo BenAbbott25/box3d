@@ -1,46 +1,52 @@
-# to be used in blender. create a box of size x, y, z and render it as a wireframe
-
-print("Hello, World!")
-
 import bpy
 
-# clear all objects
 def clear_objects():
+    """Clears all objects from the scene."""
     bpy.ops.object.select_all(action='DESELECT')
     bpy.ops.object.select_all(action='SELECT')
     bpy.ops.object.delete()
 
-# create the containing box (6 sides)
-# create the containing box (6 sides)
-def create_container(w, d, h):
-    # base
-    create_item(w, d, 0.01, w/2, d/2, 0)
-    
-    # top
-    create_item(w, d, 0.01, w/2, d/2, h)
-    
-    # yz plane
-    create_item(0.01, d, h, 0, d/2, h/2)
-    create_item(0.01, d, h, w, d/2, h/2)
-    
-    #xz plane
-    create_item(w, 0.01, h, w/2, 0, h/2)
-    create_item(w, 0.01, h, w/2, d, h/2)
-    
-    
-# Create a box of size w, h, d at location x, y, z
 def create_item(w, h, d, x, y, z):
+    """Creates a single item (a scaled cube) in the scene at specified coordinates."""
     bpy.ops.mesh.primitive_cube_add(size=1, location=(x, y, z))
     cube = bpy.context.object
     cube.scale.x = w
     cube.scale.y = h
     cube.scale.z = d
 
-def run():
-    clear_objects()
-    create_container(2, 3, 1)
-    # create_item(0.5, 2.5, 0.5, 0.5, 0, 0)
-    # create_item(0.5, 1.5, 0.5, -0.5, 0, 0)
-    # create_item(0.5, 1.5, 0.5, 0, 0.5, 0)
+class Container:
+    def __init__(self, width, depth, height, closed: bool = True):
+        self.width = width
+        self.depth = depth
+        self.height = height
+        self.closed = closed
 
-run()
+    def render(self):
+        """Creates the container structure with the specified dimensions."""
+        # Base
+        create_item(self.width, self.depth, 0.01, self.width / 2, self.depth / 2, 0)
+        
+        # Top
+        if self.closed:
+            create_item(self.width, self.depth, 0.01, self.width / 2, self.depth / 2, self.height)
+        
+        # YZ planes
+        create_item(0.01, self.depth, self.height, 0, self.depth / 2, self.height / 2)
+        create_item(0.01, self.depth, self.height, self.width, self.depth / 2, self.height / 2)
+        
+        # XZ planes
+        create_item(self.width, 0.01, self.height, self.width / 2, 0, self.height / 2)
+        create_item(self.width, 0.01, self.height, self.width / 2, self.depth, self.height / 2)
+
+    def check_collision(self, other_object):
+        """Placeholder for collision detection logic."""
+        # Logic to check collision with other objects
+        pass
+
+# Usage example
+clear_objects()
+container = Container(2, 3, 1)
+container.render()  # Render the container in Blender
+
+# list all objects
+print(bpy.context.scene.objects)
