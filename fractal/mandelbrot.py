@@ -1,37 +1,49 @@
+import os
 import numpy as np
 import matplotlib.pyplot as plt
+from tqdm import tqdm
 
 # Function to determine if a point is in the Mandelbrot set
-def mandelbrot(c, max_iter):
+def mandelbrot(c, max_iter, power):
     z = 0
     n = 0
     while abs(z) <= 2 and n < max_iter:
-        z = z*z + c
+        z = z**power + c
         n += 1
     if n == max_iter:
         return max_iter
     return n + 1 - np.log(np.log2(abs(z)))
 
-# Image size (pixels)
-width = 800
-height = 800
-
-# Plot window
-real_axis = np.linspace(-2.0, 2.0, width)
-imag_axis = np.linspace(-2.0, 2.0, height)
-
-# Create a list of complex coordinates
-c = np.array([r + 1j*i for r in real_axis for i in imag_axis])
-
-# Compute Mandelbrot sequence
-mandelbrot_vector = np.vectorize(mandelbrot)
-escape_values = mandelbrot_vector(c, 256).reshape((height, width))
-
 # Plotting
-def plot_mandelbrot():
-    plt.imshow(escape_values, extent=(-2.0, 1.0, -1.5, 1.5), cmap='hot', interpolation='nearest')
+def plot_mandelbrot(zoom, max_iter, power, real_offset, imag_offset):
+    width = 1200
+    height = 1200
+    real_axis = np.linspace(real_offset - zoom, real_offset + zoom, width)
+    imag_axis = np.linspace(imag_offset - zoom, imag_offset + zoom, height)
+    c = np.array([r + 1j*i for r in real_axis for i in imag_axis])
+    mandelbrot_vector = np.vectorize(mandelbrot)
+    escape_values = mandelbrot_vector(c, max_iter, power).reshape((height, width))
+    plt.figure(figsize=(10, 8))
+    plt.imshow(escape_values, extent=(real_offset - zoom, real_offset + zoom, imag_offset - zoom, imag_offset + zoom), cmap='hot', interpolation='nearest')
     plt.colorbar()
-    plt.title('Mandelbrot Set')
+    plt.title(f'Mandelbrot Set (max_iter: {max_iter}, power: {power})')
     plt.xlabel('Re')
     plt.ylabel('Im')
-    plt.show()
+    if not os.path.exists('max_iter_' + str(max_iter)):
+        os.makedirs('max_iter_' + str(max_iter))
+    plt.savefig(f'max_iter_{max_iter}/max_iter_{max_iter}_power_{power}.png')
+    # plt.show()
+    # plt.close()
+
+zoom = 2.0
+max_iter = 256
+power = 1.0
+real_offset = 0.0
+imag_offset = 0.0
+
+min_power = 1.0
+max_power = 2.0
+step = 0.025
+for max_iter in tqdm(range(256, 512, 128)):
+    for power in tqdm(np.arange(min_power, max_power + step, step)):
+        plot_mandelbrot(zoom, max_iter, power, real_offset, imag_offset)
