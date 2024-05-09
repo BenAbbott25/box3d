@@ -6,29 +6,30 @@ def draw_vector(coords: list[np.array], color: str = 'black', fill: bool = False
     if fill:
         plt.fill([0, 0, coords[0], coords[0]], [0, coords[1], coords[1], 0], color=color, alpha=0.2)
 
-container = {'coords': np.array([4, 3]), 'color': 'black', 'fill': True}
-box1 = {'coords': np.array([3.5, 1.5]), 'color': 'blue'}
-box1_inverse = {'coords': np.array([1.5, 3.5]), 'color': 'blue'}
-box2 = {'coords': np.array([3, 1.5]), 'color': 'green'}
-box2_inverse = {'coords': np.array([1.5, 3]), 'color': 'green'}
+container = {'coords': np.array([320, 240]), 'color': 'black', 'fill': True}
+box1 = {'coords': np.array([260, 210]), 'color': 'blue'}
+box1_inverse = {'coords': np.array([210, 260]), 'color': 'blue'}
+box2 = {'coords': np.array([60, 230]), 'color': 'green'}
+box2_inverse = {'coords': np.array([230, 60]), 'color': 'green'}
 
-vectors = [
-    container,
+box_vectors = [
     box1,
     box2,
     box1_inverse,
     box2_inverse
 ]
 
-x_limits = [vector['coords'][0] for vector in vectors]
-y_limits = [vector['coords'][1] for vector in vectors]
-max_limit = max(x_limits + y_limits)
+x_limits = [vector['coords'][0] for vector in box_vectors]
+y_limits = [vector['coords'][1] for vector in box_vectors]
+max_limit = max(x_limits + y_limits + [container['coords'][0], container['coords'][1]])
 plt.xlim(0, int(max_limit + 1))
 plt.ylim(0, int(max_limit + 1))
 # add gridlines
 plt.grid(True)
 
-for vector in vectors:
+draw_vector(container['coords'], container['color'], container.get('fill', False))
+
+for vector in box_vectors:
     draw_vector(vector['coords'], vector['color'], vector.get('fill', False))
     # refresh graph
     plt.draw()
