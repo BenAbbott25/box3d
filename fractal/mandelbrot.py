@@ -15,7 +15,7 @@ def mandelbrot(c, max_iter, power):
     return n + 1 - np.log(np.log2(abs(z)))
 
 # Plotting
-def plot_mandelbrot(zoom, max_iter, power, real_offset, imag_offset):
+def plot_mandelbrot(zoom, max_iter, power, real_offset, imag_offset, frame):
     width = 1200
     height = 1200
     real_axis = np.linspace(real_offset - zoom, real_offset + zoom, width)
@@ -26,14 +26,14 @@ def plot_mandelbrot(zoom, max_iter, power, real_offset, imag_offset):
     plt.figure(figsize=(10, 8))
     plt.imshow(escape_values, extent=(real_offset - zoom, real_offset + zoom, imag_offset - zoom, imag_offset + zoom), cmap='hot', interpolation='nearest')
     plt.colorbar()
-    plt.title(f'Mandelbrot Set (max_iter: {max_iter}, power: {power})')
+    plt.title(f'Mandelbrot Set (max_iter: {max_iter}, power: {round(power, 2)})')
     plt.xlabel('Re')
     plt.ylabel('Im')
     if not os.path.exists('max_iter_' + str(max_iter)):
         os.makedirs('max_iter_' + str(max_iter))
-    plt.savefig(f'max_iter_{max_iter}/max_iter_{max_iter}_power_{power}.png')
+    plt.savefig(f'max_iter_{max_iter}/max_iter_{max_iter}_run_2_frame_{frame}.png')
     # plt.show()
-    # plt.close()
+    plt.close()
 
 zoom = 2.0
 max_iter = 256
@@ -42,8 +42,11 @@ real_offset = 0.0
 imag_offset = 0.0
 
 min_power = 1.0
-max_power = 2.0
-step = 0.025
-for max_iter in tqdm(range(256, 512, 128)):
+max_power = 5.0
+step = 0.01
+max_iters = [64]
+for max_iter in tqdm(max_iters):
+    frame = 0
     for power in tqdm(np.arange(min_power, max_power + step, step)):
-        plot_mandelbrot(zoom, max_iter, power, real_offset, imag_offset)
+        plot_mandelbrot(zoom, max_iter, power, real_offset, imag_offset, frame)
+        frame += 1
