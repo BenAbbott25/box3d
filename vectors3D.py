@@ -9,8 +9,8 @@ fig = plt.figure()
 ax = fig.add_subplot(111, projection='3d', aspect='equal', xlim=[0, 5], ylim=[0, 5], zlim=[0, 5])
 
 
-def draw_vector(ax, vector, color, position = [0,0,0]):
-    coords = np.add(vector, position)
+def draw_vector(ax, coords, color, position = [0,0,0]):
+    # coords = np.add(vector, position)
     ax.quiver(position[0], position[1], position[2], coords[0], coords[1], coords[2], color=color, arrow_length_ratio=0.1)
 
 def draw_box(ax, vector, color, position = [0,0,0]):
@@ -142,7 +142,7 @@ def plot_search_space(search_space, ax):
 
 def reset_plot():
     plt.clf()
-    ax = fig.add_subplot(111, projection='3d', aspect='equal', xlim=[0, 5], ylim=[0, 5], zlim=[0, 5])
+    ax = fig.add_subplot(111, projection='3d', xlim=[0, 5], ylim=[0, 5], zlim=[0, 5])
     return ax
 
 def explore_subspace(searchAreaType, space, container_vector, active_orientation_vector):
@@ -167,20 +167,16 @@ def explore_subspace(searchAreaType, space, container_vector, active_orientation
         axis_vector = space["area"] - active_orientation_vector
         if axis_vector[0] == 0 and axis_vector[1] == 0 and axis_vector[2] == 0:
             axis_vector = [2 * axis for axis in space["position"]]
-            
-        print("Space area: "+str(space["area"]))
-        print("Active orientation vector: "+str(active_orientation_vector))
-        print("Axis vector: "+str(axis_vector))
 
         if axis_vector[0] != 0:
             subspaceA = {"area": [container_vector[0], container_vector[1] - active_orientation_vector[1], container_vector[2]], "position": [0,active_orientation_vector[1],0]}
             subspaceB = {"area": [container_vector[0], container_vector[1], container_vector[2] - active_orientation_vector[2]], "position": [0,0,active_orientation_vector[2]]}
         elif axis_vector[1] != 0:
-            subspaceA = {"area": [container_vector[0] - active_orientation_vector[0], axis_vector[1], container_vector[2]], "position": [active_orientation_vector[0],0,0]}
-            subspaceB = {"area": [container_vector[0], axis_vector[1], container_vector[2] - active_orientation_vector[2]], "position": [0,0,active_orientation_vector[2]]}
+            subspaceA = {"area": [container_vector[0] - active_orientation_vector[0], container_vector[1], container_vector[2]], "position": [active_orientation_vector[0],0,0]}
+            subspaceB = {"area": [container_vector[0], container_vector[1], container_vector[2] - active_orientation_vector[2]], "position": [0,0,active_orientation_vector[2]]}
         elif axis_vector[2] != 0:
-            subspaceA = {"area": [container_vector[0] - active_orientation_vector[0], container_vector[1], axis_vector[2]], "position": [active_orientation_vector[0],0,0]}
-            subspaceB = {"area": [container_vector[0], container_vector[1] - active_orientation_vector[1], axis_vector[2]], "position": [0,active_orientation_vector[1],0]}
+            subspaceA = {"area": [container_vector[0] - active_orientation_vector[0], container_vector[1], container_vector[2]], "position": [active_orientation_vector[0],0,0]}
+            subspaceB = {"area": [container_vector[0], container_vector[1] - active_orientation_vector[1], container_vector[2]], "position": [0,active_orientation_vector[1],0]}
         
 
         return [subspaceA, subspaceB]
@@ -196,25 +192,25 @@ def explore_subspace(searchAreaType, space, container_vector, active_orientation
 
         if axis_vector[0] == 0:
 
-            subspaceA = {"area": [container_vector[0], container_vector[1] - active_orientation_vector[1], active_orientation_vector[2]], "position": [0,0,0]}
-            subspaceB = {"area": [container_vector[0], active_orientation_vector[1], container_vector[2] - active_orientation_vector[2]], "position": [0,0,0]}
+            subspaceA = {"area": [container_vector[0], container_vector[1] - active_orientation_vector[1], active_orientation_vector[2]], "position": [0,active_orientation_vector[1],0]}
+            subspaceB = {"area": [container_vector[0], active_orientation_vector[1], container_vector[2] - active_orientation_vector[2]], "position": [0,0,active_orientation_vector[2]]}
 
-            subspaceC = {"area": [container_vector[0] - active_orientation_vector[0], active_orientation_vector[1], container_vector[2]], "position": [0,0,0]}
-            subspaceD = {"area": [container_vector[0] - active_orientation_vector[0], container_vector[1], active_orientation_vector[2]], "position": [0,0,0]}
+            subspaceC = {"area": [container_vector[0] - active_orientation_vector[0], active_orientation_vector[1], container_vector[2]], "position": [active_orientation_vector[0],0,0]}
+            subspaceD = {"area": [container_vector[0] - active_orientation_vector[0], container_vector[1], active_orientation_vector[2]], "position": [active_orientation_vector[0],0,0]}
             
         if axis_vector[1] == 0:
-            subspaceA = {"area": [container_vector[0] - active_orientation_vector[0], container_vector[1], container_vector[2]], "position": [0,0,0]}
-            subspaceB = {"area": [active_orientation_vector[0], container_vector[1], container_vector[2] - active_orientation_vector[2]], "position": [0,0,0]}
+            subspaceA = {"area": [container_vector[0] - active_orientation_vector[0], container_vector[1], active_orientation_vector[2]], "position": [active_orientation_vector[0],0,0]}
+            subspaceB = {"area": [active_orientation_vector[0], container_vector[1], container_vector[2] - active_orientation_vector[2]], "position": [0,0,active_orientation_vector[2]]}
 
-            subspaceC = {"area": [active_orientation_vector[0], container_vector[1] - active_orientation_vector[1], container_vector[2] - active_orientation_vector[2]], "position": [0,0,0]}
-            subspaceD = {"area": [container_vector[0], container_vector[1] - active_orientation_vector[1], active_orientation_vector[2]], "position": [0,0,0]}
+            subspaceC = {"area": [active_orientation_vector[0], container_vector[1] - active_orientation_vector[1], container_vector[2]], "position": [0,active_orientation_vector[1],0]}
+            subspaceD = {"area": [container_vector[0], container_vector[1] - active_orientation_vector[1], active_orientation_vector[2]], "position": [0,active_orientation_vector[1],0]}
 
         if axis_vector[2] == 0:
-            subspaceA = {"area": [container_vector[0] - active_orientation_vector[0], container_vector[1] - active_orientation_vector[1], container_vector[2]], "position": [0,0,0]}
-            subspaceB = {"area": [active_orientation_vector[0], container_vector[1] - active_orientation_vector[1], container_vector[2]], "position": [0,0,0]}
+            subspaceA = {"area": [container_vector[0] - active_orientation_vector[0], active_orientation_vector[1], container_vector[2]], "position": [active_orientation_vector[0],0,0]}
+            subspaceB = {"area": [active_orientation_vector[0], container_vector[1] - active_orientation_vector[1], container_vector[2]], "position": [0,active_orientation_vector[1],0]}
 
-            subspaceC = {"area": [container_vector[0], active_orientation_vector[1], container_vector[2] - active_orientation_vector[2]], "position": [0,0,0]}
-            subspaceD = {"area": [active_orientation_vector[0], container_vector[1], container_vector[2] - active_orientation_vector[2]], "position": [0,0,0]}
+            subspaceC = {"area": [container_vector[0], active_orientation_vector[1], container_vector[2] - active_orientation_vector[2]], "position": [0,0,active_orientation_vector[2]]}
+            subspaceD = {"area": [active_orientation_vector[0], container_vector[1], container_vector[2] - active_orientation_vector[2]], "position": [0,0,active_orientation_vector[2]]}
 
         return [subspaceA, subspaceB, subspaceC, subspaceD]
 
@@ -223,22 +219,29 @@ def explore_subspace(searchAreaType, space, container_vector, active_orientation
 
     return subspaces
 
+def plot_solution(solution, ax):
+    ax = reset_plot()
+    draw_box(ax, solution["container"], "black")
+    draw_vector(ax, solution["item0"], "blue",)
+    draw_box(ax, solution["item0"], "blue")
+    draw_vector(ax, solution["item1Orientation"], "red", solution["item1Pos"])
+    draw_box(ax, solution["item1Orientation"], "red", solution["item1Pos"])
+    draw_vector(ax, solution["item2Orientation"], "green", solution["item2Pos"])
+    draw_box(ax, solution["item2Orientation"], "green", solution["item2Pos"])
+    plt.draw()
+
 def main():
     container = ContainerVector(containerVector['coords'], containerVector['color'])
     items = init_vectors()
     active_item = init_active_item(items)
-    orientation_index = 0
 
-    solved = False
     plt.draw()
-    plt.pause(2)
+    plt.pause(1)
     reset_plot()
 
-    while not solved:
-        if orientation_index > len(active_item.allowed_orientations) - 1:
-            # print("No more orientations")
-            break
-        active_orientation_vector = active_item.allowed_orientations[orientation_index]
+    solutions = []
+
+    for active_orientation_vector in active_item.allowed_orientations:
         active_item.find_search_space(container, active_orientation_vector)
 
         for searchAreaType in range(len(active_item.search_space)):
@@ -248,22 +251,19 @@ def main():
                 plot_active_item(active_orientation_vector, container, ax)
                 plot_search_space(space, ax)
                 subspaces = explore_subspace(searchAreaType, space, container.coords, active_orientation_vector)
-                if subspaces == "[0,0,0]":
-                    plt.pause(30)
+                for subspace in subspaces:
+                    draw_box(ax, subspace["area"], "orange", subspace["position"])
+                    plt.pause(0.1)
+
+                    # input("Press Enter to continue...")
 
                 for item in items:
                     if item != active_item:
                         for item_orientation in item.allowed_orientations:
-                            # print("Item1 Orientation: "+str(item_orientation))
-                            # if item < search space x,y,z draw and continue
                             if item_orientation[0] < space["area"][0] and item_orientation[1] < space["area"][1] and item_orientation[2] < space["area"][2]:
                                 draw_vector(ax, item_orientation, item.color, space["position"])
-                                # draw_box(ax, allowed_orientation, item.color, space["position"])
 
                                 for subspace in subspaces:
-                                    draw_box(ax, subspace["area"], "orange", subspace["position"])
-                                    if searchAreaType == 2: 
-                                        plt.pause(30)
                                     for item2 in items:
                                         if item2 != active_item and item2 != item:
                                             for item2_orientation in item2.allowed_orientations:
@@ -271,16 +271,25 @@ def main():
                                                     draw_vector(ax, item2_orientation, item2.color, subspace["position"])
                                                     # draw_box(ax, allowed_orientation, item.color, space["position"])
                                                     print("Solution found")
-                                                    print(f"Container: {container.coords}, Item0 Orientation: {active_orientation_vector}, Item1 Orientation: {item_orientation}, Item2 Orientation: {item2_orientation}")
+                                                    print(f"Container: {container.coords}, Item0 Orientation: {active_orientation_vector}, Item1 Orientation: {item_orientation} - position: {space['position']}, Item2 Orientation: {item2_orientation} - position: {subspace['position']}")
                                                     print("----------------------------")
+                                                    solutions.append({"container": container.coords, "item0": active_orientation_vector, "item1Orientation": item_orientation, "item1Pos": space['position'], "item2Orientation": item2_orientation, "item2Pos": subspace['position']})
 
                     plt.draw()
-                    plt.pause(2)
+                    plt.pause(0.1)
                             
                             # else:
                             #     print("No solutions found with orientation: "+str(item_orientation))
 
-        orientation_index += 1
+    if len(solutions) == 0:
+        print("No solutions found")
+    else:
+        print(f"Total solutions found: {len(solutions)}")
+        for solution in solutions:
+            print(solution)
+            plot_solution(solution, ax)
+            input("Press Enter to continue...")
+
 
 main()
 
