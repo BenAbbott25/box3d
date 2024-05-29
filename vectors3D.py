@@ -182,9 +182,6 @@ def explore_subspace(searchAreaType, space, container_vector, active_orientation
         return [subspaceA, subspaceB]
 
     elif searchAreaType == 2:
-        # let active = [a,b,c], container = [d,e,f]
-        # searchAreaType2 includes: [d-a, e-b, f], [d-a, e, f-c] and [d, e-b, f-c]
-
         axis_vector = space["area"] - container_vector
 
         if axis_vector[0] == 0 and axis_vector[1] == 0 and axis_vector[2] == 0:
@@ -254,8 +251,8 @@ def main():
                     subspaces = explore_subspace(searchAreaType, space, container.coords, active_orientation_vector)
                     for subspace in subspaces:
                         draw_box(ax, subspace["area"], "orange", subspace["position"])
+                        
                         # plt.pause(0.1)
-
                         # input("Press Enter to continue...")
 
                     for item in items:
@@ -276,8 +273,8 @@ def main():
                                                         print("----------------------------")
                                                         solutions.append({"container": container.coords, "item0": active_orientation_vector, "item1Orientation": item_orientation, "item1Pos": space['position'], "item2Orientation": item2_orientation, "item2Pos": subspace['position']})
 
-                    # plt.draw()
-                    # plt.pause(0.1)
+                    plt.draw()
+                    plt.pause(0.01)
 
 
     if len(solutions) == 0:
