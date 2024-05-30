@@ -227,6 +227,11 @@ def plot_solution(solution, ax):
     draw_box(ax, solution["item2Orientation"], "green", solution["item2Pos"])
     plt.draw()
 
+    for angle in range(0, 180, 1):
+        ax.view_init(azim=angle)
+        plt.draw()
+        plt.pause(0.01)
+
 def main():
     container = ContainerVector(containerVector['coords'], containerVector['color'])
     items = init_vectors()
@@ -248,18 +253,20 @@ def main():
                     ax = reset_plot()
                     plot_active_item(active_orientation_vector, container, ax)
                     plot_search_space(space, ax)
-                    subspaces = explore_subspace(searchAreaType, space, container.coords, active_orientation_vector)
-                    for subspace in subspaces:
-                        draw_box(ax, subspace["area"], "orange", subspace["position"])
-                        
-                        # plt.pause(0.1)
-                        # input("Press Enter to continue...")
 
                     for item in items:
                         if item != active_item:
                             for item_orientation in item.allowed_orientations:
                                 if item_orientation[0] < space["area"][0] and item_orientation[1] < space["area"][1] and item_orientation[2] < space["area"][2]:
                                     draw_vector(ax, item_orientation, item.color, space["position"])
+                                    draw_box(ax, item_orientation, item.color, space["position"])
+
+                                    subspaces = explore_subspace(searchAreaType, space, container.coords, active_orientation_vector)
+                                    for subspace in subspaces:
+                                        draw_box(ax, subspace["area"], "orange", subspace["position"])
+                                        
+                                        # plt.pause(0.1)
+                                        # input("Press Enter to continue...")
 
                                     for subspace in subspaces:
                                         for item2 in items:
@@ -267,7 +274,6 @@ def main():
                                                 for item2_orientation in item2.allowed_orientations:
                                                     if item2_orientation[0] < subspace["area"][0] and item2_orientation[1] < subspace["area"][1] and item2_orientation[2] < subspace["area"][2]:
                                                         draw_vector(ax, item2_orientation, item2.color, subspace["position"])
-                                                        # draw_box(ax, allowed_orientation, item.color, space["position"])
                                                         print("Solution found")
                                                         print(f"Container: {container.coords}, Item0 Orientation: {active_orientation_vector}, Item1 Orientation: {item_orientation} - position: {space['position']}, Item2 Orientation: {item2_orientation} - position: {subspace['position']}")
                                                         print("----------------------------")
@@ -275,17 +281,17 @@ def main():
 
                     plt.draw()
                     plt.pause(0.01)
+            
 
 
     if len(solutions) == 0:
         print("No solutions found")
     else:
+        solutions = sorted(solutions, key=lambda x: x["item1Pos"][2] + x["item2Pos"][2])
         print(f"Total solutions found: {len(solutions)}")
         for solution in solutions:
             print(solution)
             plot_solution(solution, ax)
-            input("Press Enter to continue...")
-
+            # input("Press Enter to continue...")
 
 main()
-
