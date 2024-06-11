@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 
-containerVector = {'coords': np.array([4, 5, 3]), 'color': 'red'}
+
 
 fig = plt.figure()
 
@@ -58,7 +58,7 @@ class ItemVector:
                                     [self.coords[2], self.coords[1], self.coords[0]]])
 
         for perm in item_permutations:
-            if perm[0] < container.coords[0] and perm[1] < container.coords[1] and perm[2] < container.coords[2]:
+            if perm[0] <= container.coords[0] and perm[1] <= container.coords[1] and perm[2] <= container.coords[2]:
                 vec = ItemVector(perm, self.color)
                 draw_vector(ax, perm, self.color)
                 draw_box(ax, perm, self.color)
@@ -107,19 +107,21 @@ class ContainerVector:
 
 
 def init_vectors():
+    # containerVector = {'coords': np.array([4, 5, 3]), 'color': 'red'}
+    containerVector = {'coords': np.array([10, 8, 6]), 'color': 'red'}
     # draw_vector(containerVector, ax)
     container = ContainerVector(containerVector['coords'], containerVector['color'])
 
     draw_box(ax, container.coords, container.color)
-    item1 = ItemVector(np.array([1.5, 1, 3]), 'blue')
-    item2 = ItemVector(np.array([2, 3, 1]), 'green')
-    item3 = ItemVector(np.array([1, 2, 4]), 'yellow')
+    item1 = ItemVector(np.array([np.random.randint(4, 8), np.random.randint(4, 8), np.random.randint(4, 8)]), 'blue')
+    item2 = ItemVector(np.array([np.random.randint(4, 8), np.random.randint(4, 8), np.random.randint(4, 8)]), 'green')
+    item3 = ItemVector(np.array([np.random.randint(4, 8), np.random.randint(4, 8), np.random.randint(4, 8)]), 'yellow')
     items = [item1, item2, item3]
 
     for item in items:
         item.find_allowed_orientations(container, ax)
     
-    return items
+    return items, container
 
 def init_active_item(items):
 
@@ -142,7 +144,7 @@ def plot_search_space(search_space, ax):
 
 def reset_plot():
     plt.clf()
-    ax = fig.add_subplot(111, projection='3d', xlim=[0, 5], ylim=[0, 5], zlim=[0, 5])
+    ax = fig.add_subplot(111, projection='3d', xlim=[0, 10], ylim=[0, 10], zlim=[0, 10])
     return ax
 
 def explore_subspace(searchAreaType, space, container_vector, active_orientation_vector):
@@ -233,8 +235,7 @@ def plot_solution(solution, ax):
         plt.pause(0.01)
 
 def main():
-    container = ContainerVector(containerVector['coords'], containerVector['color'])
-    items = init_vectors()
+    items, container = init_vectors()
     active_item = init_active_item(items)
 
     plt.draw()
@@ -257,7 +258,7 @@ def main():
                     for item in items:
                         if item != active_item:
                             for item_orientation in item.allowed_orientations:
-                                if item_orientation[0] < space["area"][0] and item_orientation[1] < space["area"][1] and item_orientation[2] < space["area"][2]:
+                                if item_orientation[0] <= space["area"][0] and item_orientation[1] <= space["area"][1] and item_orientation[2] <= space["area"][2]:
                                     draw_vector(ax, item_orientation, item.color, space["position"])
                                     draw_box(ax, item_orientation, item.color, space["position"])
 
@@ -272,7 +273,7 @@ def main():
                                         for item2 in items:
                                             if item2 != active_item and item2 != item:
                                                 for item2_orientation in item2.allowed_orientations:
-                                                    if item2_orientation[0] < subspace["area"][0] and item2_orientation[1] < subspace["area"][1] and item2_orientation[2] < subspace["area"][2]:
+                                                    if item2_orientation[0] <= subspace["area"][0] and item2_orientation[1] <= subspace["area"][1] and item2_orientation[2] <= subspace["area"][2]:
                                                         draw_vector(ax, item2_orientation, item2.color, subspace["position"])
                                                         print("Solution found")
                                                         print(f"Container: {container.coords}, Item0 Orientation: {active_orientation_vector}, Item1 Orientation: {item_orientation} - position: {space['position']}, Item2 Orientation: {item2_orientation} - position: {subspace['position']}")
